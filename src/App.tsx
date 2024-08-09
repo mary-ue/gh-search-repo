@@ -1,12 +1,12 @@
-import './App.scss'
+import { MainPage } from './layouts/Main/MainPage';
 
 function App() {
 
   return (
     <>
-      App
+      <MainPage />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
