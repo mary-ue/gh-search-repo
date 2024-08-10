@@ -1,3 +1,55 @@
 .wrapper {
+  position: relative;
+  padding: 20px;
   background-color: #F2F2F2;
+}
+
+.choose {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 20px;
+  color: #4F4F4F;
+}
+
+.title {
+  margin-bottom: 15px;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 40px;
+}
+
+.info {
+  margin-bottom: 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 'mainLanguage raiting' 'allLanguages allLanguages';
+  gap: 10px;
+}
+
+.mainLanguage {
+  grid-area: mainLanguage;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.allLanguages {
+  grid-area: allLanguages;
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 8px;
+}
+
+.raiting {
+  grid-area: raiting;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 20px;
+}
+
+.description {
+  margin-bottom: 15px;
 }

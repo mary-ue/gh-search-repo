@@ -14,7 +14,11 @@ interface GitHubResponse {
   };
 }
 
-export const fetchRepositories = createAsyncThunk<Repository[], string, { rejectValue: string }>(
+export const fetchRepositories = createAsyncThunk<
+  Repository[],
+  string,
+  { rejectValue: string }
+>(
   'repositories/fetchRepositories',
   async (searchTerm: string, { rejectWithValue }) => {
     try {
@@ -43,6 +47,15 @@ export const fetchRepositories = createAsyncThunk<Repository[], string, { reject
                         totalCount
                       }
                       updatedAt
+                      description
+                      licenseInfo {
+                        name
+                      }
+                      languages(first: 10) {
+                        nodes {
+                          name
+                        }
+                      }
                     }
                   }
                 }

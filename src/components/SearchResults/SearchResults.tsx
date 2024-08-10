@@ -15,6 +15,7 @@ export const SearchResults = ({
   repositories,
   loading,
   error,
+  onRepoSelect,
 }: ISearchResults): JSX.Element => {
   return (
     <div className={styles.wrapper}>
@@ -28,7 +29,6 @@ export const SearchResults = ({
             <h2 className={styles.title}>Результаты поиска</h2>
 
             <TableContainer
-              className={styles.wrapper}
               component={Paper}
               sx={{ boxShadow: 'none', border: 'none', overflowX: 'hidden' }}
             >
@@ -61,7 +61,16 @@ export const SearchResults = ({
                 </TableHead>
                 <TableBody>
                   {repositories.map((repo) => (
-                    <TableRow key={repo.id}>
+                    <TableRow
+                      key={repo.id}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: '#f0f0f0',
+                        }
+                      }}
+                      onClick={() => onRepoSelect(repo)}
+                    >
                       <TableCell>{repo.name}</TableCell>
                       <TableCell>
                         {repo.primaryLanguage?.name || 'Не указан'}

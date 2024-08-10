@@ -8,6 +8,11 @@ export interface Repository {
   forks: { totalCount: number };
   stargazers: { totalCount: number };
   updatedAt: string;
+  description?: string;
+  licenseInfo?: { name: string };
+  languages: {
+    nodes: Array<{ name: string }>;
+  };
 }
 
 interface SearchState {
