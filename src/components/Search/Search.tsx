@@ -14,8 +14,6 @@ export const Search = (): JSX.Element => {
     if (search.trim()) {
       dispatch(fetchRepositories(search));
     }
-
-    setSearch('');
   }
 
   return (

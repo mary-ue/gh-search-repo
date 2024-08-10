@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fetchRepositories } from './searchAction';
 
 export interface Repository {
+  id: string;
   name: string;
   primaryLanguage: { name: string } | null;
   forks: { totalCount: number };

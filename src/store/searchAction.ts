@@ -31,6 +31,7 @@ export const fetchRepositories = createAsyncThunk<Repository[], string, { reject
                 edges {
                   node {
                     ... on Repository {
+                      id
                       name
                       primaryLanguage {
                         name
