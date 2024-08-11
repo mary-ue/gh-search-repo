@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Repository } from './searchSlice';
+import { PageInfo, Repository } from './searchSlice';
+import { RootState } from './store';
 
 const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_URL!;
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN!;
@@ -7,20 +8,32 @@ const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN!;
 interface GitHubResponse {
   data: {
     search: {
+      repositoryCount: number;
       edges: Array<{
         node: Repository;
       }>;
+      pageInfo: {
+        endCursor: string | null;
+        hasNextPage: boolean;
+      };
     };
   };
 }
 
+interface SearchData {
+  searchTerm: string;
+  count: number;
+  cursor?: string | null;
+}
+
 export const fetchRepositories = createAsyncThunk<
-  Repository[],
-  string,
-  { rejectValue: string }
+{ repositories: Repository[]; pageInfo: PageInfo; totalCount: number },
+  SearchData,
+  { rejectValue: string; state: RootState }
 >(
   'repositories/fetchRepositories',
-  async (searchTerm: string, { rejectWithValue }) => {
+  async ({ searchTerm, count, cursor }, { rejectWithValue }) => {
+
     try {
       const response = await fetch(GITHUB_API_URL, {
         method: 'POST',
@@ -30,8 +43,9 @@ export const fetchRepositories = createAsyncThunk<
         },
         body: JSON.stringify({
           query: `
-            query {
-              search(query: "${searchTerm}", type: REPOSITORY, first: 10) {
+            query($searchTerm: String!, $count: Int!, $cursor: String) {
+              search(query: $searchTerm, type: REPOSITORY, first: $count, after: $cursor) {
+                repositoryCount
                 edges {
                   node {
                     ... on Repository {
@@ -59,9 +73,18 @@ export const fetchRepositories = createAsyncThunk<
                     }
                   }
                 }
+                pageInfo {
+                  endCursor
+                  hasNextPage
+                }
               }
             }
           `,
+          variables: {
+            searchTerm,
+            count,
+            cursor: cursor ?? undefined,
+          },
         }),
       });
 
@@ -70,9 +93,13 @@ export const fetchRepositories = createAsyncThunk<
       }
 
       const data: GitHubResponse = await response.json();
-      return data.data.search.edges.map(
-        (edge: { node: Repository }) => edge.node
-      );
+      return {
+        repositories: data.data.search.edges.map(
+          (edge: { node: Repository }) => edge.node
+        ),
+        totalCount: data.data.search.repositoryCount,
+        pageInfo: data.data.search.pageInfo,
+      };
     } catch (error: unknown) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);

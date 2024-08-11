@@ -1,18 +1,21 @@
 import { Button, Input } from '@mui/material';
 import styles from './Search.module.scss';
-import { useState } from 'react';
-import { useAppDispatch } from '../../store/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../store/reduxHooks';
 import { fetchRepositories } from '../../store/searchAction';
+import { setSearchData } from '../../store/searchSlice';
+import { useState } from 'react';
 
 export const Search = (): JSX.Element => {
   const [search, setSearch] = useState<string>('');
   const dispatch = useAppDispatch();
+  const { count } = useAppSelector(state => state.search);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (search.trim()) {
-      dispatch(fetchRepositories(search));
+      dispatch(setSearchData(search));
+      dispatch(fetchRepositories({ searchTerm: search, count }));
     }
   }
 
