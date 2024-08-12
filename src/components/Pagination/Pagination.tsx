@@ -11,7 +11,7 @@ export const Pagination = (): JSX.Element => {
     count: itemsPerPage,
     searchData: search,
     pageInfo,
-    totalCount
+    totalCount,
   } = useAppSelector((state) => state.search);
   const [page, setPage] = useState<number>(1);
   const dispatch = useAppDispatch();
@@ -20,15 +20,15 @@ export const Pagination = (): JSX.Element => {
   const startIndex = (page - 1) * itemsPerPage + 1;
   const endIndex = Math.min(page * itemsPerPage, totalCount);
 
-    const fetchRepos = (newPage: number, count?: number) => {
-      dispatch(
-        fetchRepositories({
-          searchTerm: search,
-          count: count || itemsPerPage,
-          cursor: newPage === 1 ? undefined : pageInfo?.endCursor,
-        })
-      );
-    };
+  const fetchRepos = (newPage: number, count?: number) => {
+    dispatch(
+      fetchRepositories({
+        searchTerm: search,
+        count: count || itemsPerPage,
+        cursor: newPage === 1 ? undefined : pageInfo?.endCursor,
+      })
+    );
+  };
 
   const handleItemsPerPageChange = (event: SelectChangeEvent<number>) => {
     const count = Number(event.target.value);
@@ -54,11 +54,15 @@ export const Pagination = (): JSX.Element => {
     <div className={styles.wrapper}>
       <div>
         <span>Rows per page: </span>
-        <Select value={itemsPerPage} onChange={handleItemsPerPageChange}   sx={{
-    '& .MuiOutlinedInput-notchedOutline': {
-      border: 'none',
-    },
-  }}>
+        <Select
+          value={itemsPerPage}
+          onChange={handleItemsPerPageChange}
+          sx={{
+            '& .MuiOutlinedInput-notchedOutline': {
+              border: 'none',
+            },
+          }}
+        >
           {[10, 20, 30, 40, 50].map((option) => (
             <MenuItem key={option} value={option}>
               {option}
@@ -68,7 +72,8 @@ export const Pagination = (): JSX.Element => {
       </div>
       <div>
         <span>
-          {totalCount > 0 ? `${startIndex} - ${endIndex}` : '0 - 0'} of {totalCount}
+          {totalCount > 0 ? `${startIndex} - ${endIndex}` : '0 - 0'} of{' '}
+          {totalCount}
         </span>
       </div>
       <div>

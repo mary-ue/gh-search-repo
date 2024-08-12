@@ -2,7 +2,7 @@ import { Button, Input } from '@mui/material';
 import styles from './Search.module.scss';
 import { useAppDispatch, useAppSelector } from '../../store/reduxHooks';
 import { fetchRepositories } from '../../store/searchAction';
-import { setSearchData } from '../../store/searchSlice';
+import { resetSearchState, setSearchData } from '../../store/searchSlice';
 import { useState } from 'react';
 
 export const Search = (): JSX.Element => {
@@ -14,6 +14,7 @@ export const Search = (): JSX.Element => {
     e.preventDefault();
 
     if (search.trim()) {
+      dispatch(resetSearchState());
       dispatch(setSearchData(search));
       dispatch(fetchRepositories({ searchTerm: search, count }));
     }

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchRepositories } from './searchAction';
 
 export interface Repository {
@@ -20,6 +20,9 @@ export interface PageInfo {
   hasNextPage: boolean;
 }
 
+type SortColumn = 'stars' | 'forks' | 'updated';
+type SortDirection = 'asc' | 'desc';
+
 interface SearchState {
   searchData: string;
   count: number;
@@ -28,6 +31,9 @@ interface SearchState {
   pageInfo: PageInfo | null;
   loading: boolean;
   error: string | null;
+  sortColumn: SortColumn | null;
+  sortDirection: SortDirection;
+  isSorted: boolean;
 }
 
 const initialState: SearchState = {
@@ -38,18 +44,40 @@ const initialState: SearchState = {
   pageInfo: null,
   loading: false,
   error: null,
+  sortColumn: null,
+  sortDirection: 'desc',
+  isSorted: false,
 };
 
 const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
-    setSearchData(state, action) {
+    setSearchData(state, action: PayloadAction<string>) {
       state.searchData = action.payload;
     },
-    setSearchCount(state, action) {
+    setSearchCount(state, action: PayloadAction<number>) {
       state.count = action.payload;
-    }
+    },
+    setSortColumn(state, action: PayloadAction<SortColumn | null>) {
+      state.sortColumn = action.payload;
+      state.isSorted = action.payload !== null;
+    },
+    setSortDirection(state, action: PayloadAction<SortDirection>) {
+      state.sortDirection = action.payload;
+    },
+    resetSearchState(state) {
+      state.searchData = '';
+      state.count = 10;
+      state.sortColumn = null;
+      state.sortDirection = 'desc';
+      state.isSorted = false;
+      state.repositories = null;
+      state.totalCount = 0;
+      state.pageInfo = null;
+      state.loading = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -57,7 +85,7 @@ const searchSlice = createSlice({
         state.error = null;
         state.loading = true;
         state.repositories = null;
-        state.pageInfo = null; 
+        state.pageInfo = null;
       })
       .addCase(fetchRepositories.fulfilled, (state, action) => {
         state.repositories = action.payload.repositories;
@@ -72,6 +100,12 @@ const searchSlice = createSlice({
   },
 });
 
-export const { setSearchData, setSearchCount } = searchSlice.actions;
+export const {
+  setSearchData,
+  setSearchCount,
+  setSortColumn,
+  setSortDirection,
+  resetSearchState,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;

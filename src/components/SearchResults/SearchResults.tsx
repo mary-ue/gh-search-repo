@@ -2,6 +2,7 @@ import { ISearchResults } from './SearchResults.props';
 import styles from './SearchResults.module.scss';
 import { Pagination } from '../Pagination/Pagination';
 import {
+  Box,
   Paper,
   Table,
   TableBody,
@@ -10,6 +11,11 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../store/reduxHooks';
+import { setSortColumn, setSortDirection } from '../../store/searchSlice';
+import { fetchRepositories } from '../../store/searchAction';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 export const SearchResults = ({
   repositories,
@@ -17,6 +23,37 @@ export const SearchResults = ({
   error,
   onRepoSelect,
 }: ISearchResults): JSX.Element => {
+  const dispatch = useAppDispatch();
+  const { sortColumn, sortDirection, searchData, count, isSorted } =
+    useAppSelector((state) => state.search);
+
+  const handleSortChange = (column: 'stars' | 'forks' | 'updated') => {
+    const direction =
+      sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
+    dispatch(setSortColumn(column));
+    dispatch(setSortDirection(direction));
+
+    dispatch(
+      fetchRepositories({
+        searchTerm: searchData,
+        count: count,
+        sortColumn: column,
+        sortDirection: direction,
+      })
+    );
+  };
+
+  const getSortIndicator = (column: 'stars' | 'forks' | 'updated') => {
+    if (sortColumn === column) {
+      return sortDirection === 'asc' ? (
+        <ArrowUpwardIcon />
+      ) : (
+        <ArrowDownwardIcon />
+      );
+    }
+    return '';
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.results}>
@@ -35,28 +72,44 @@ export const SearchResults = ({
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell
-                      sx={{ display: 'flex', alignItems: 'center', gap: '5px' }}
-                    >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M3.33334 10L4.50834 11.175L9.16668 6.52501V16.6667H10.8333V6.52501L15.4833 11.1833L16.6667 10L10 3.33334L3.33334 10Z"
-                          fill="black"
-                          fillOpacity="0.56"
-                        />
-                      </svg>
-                      <span>Название</span>
+                    <TableCell>
+                      <Box display="flex" alignItems="center" gap="5px">
+                        {!isSorted && <ArrowUpwardIcon />}
+                        <span>Название</span>
+                      </Box>
                     </TableCell>
-                    <TableCell>Язык программирования</TableCell>
-                    <TableCell>Число форков</TableCell>
-                    <TableCell>Число звезд</TableCell>
-                    <TableCell>Дата обновления</TableCell>
+                    <TableCell>
+                      <span>Язык программирования</span>
+                    </TableCell>
+                    <TableCell
+                      sx={{ cursor: 'pointer' }}
+                      onClick={() => handleSortChange('forks')}
+                    >
+                      <Box display="flex" alignItems="center" gap="5px">
+                        <span>Число форков</span>
+                        {getSortIndicator('forks')}
+                      </Box>
+                    </TableCell>
+                    <TableCell
+                      sx={{ cursor: 'pointer' }}
+                      onClick={() => handleSortChange('stars')}
+                    >
+                      <Box display="flex" alignItems="center" gap="5px">
+                        <p>
+                          <span>Число звезд</span>
+                        </p>
+                        <p>{getSortIndicator('stars')}</p>
+                      </Box>
+                    </TableCell>
+                    <TableCell
+                      sx={{ cursor: 'pointer' }}
+                      onClick={() => handleSortChange('updated')}
+                    >
+                      <Box display="flex" alignItems="center" gap="5px">
+                        <span>Дата обновления</span>{' '}
+                        {getSortIndicator('updated')}
+                      </Box>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -67,7 +120,7 @@ export const SearchResults = ({
                         cursor: 'pointer',
                         '&:hover': {
                           backgroundColor: '#f0f0f0',
-                        }
+                        },
                       }}
                       onClick={() => onRepoSelect(repo)}
                     >

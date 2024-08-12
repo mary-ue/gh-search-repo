@@ -24,6 +24,8 @@ interface SearchData {
   searchTerm: string;
   count: number;
   cursor?: string | null;
+  sortColumn?: 'stars' | 'forks' | 'updated';
+  sortDirection?: 'asc' | 'desc';
 }
 
 export const fetchRepositories = createAsyncThunk<
@@ -32,9 +34,11 @@ export const fetchRepositories = createAsyncThunk<
   { rejectValue: string; state: RootState }
 >(
   'repositories/fetchRepositories',
-  async ({ searchTerm, count, cursor }, { rejectWithValue }) => {
+  async ({searchTerm, count, cursor, sortColumn = 'stars', sortDirection = 'desc' }, { rejectWithValue }) => {
 
     try {
+      const sortQuery = `${searchTerm} sort:${sortColumn}-${sortDirection}`;
+
       const response = await fetch(GITHUB_API_URL, {
         method: 'POST',
         headers: {
@@ -81,7 +85,7 @@ export const fetchRepositories = createAsyncThunk<
             }
           `,
           variables: {
-            searchTerm,
+            searchTerm: sortQuery,
             count,
             cursor: cursor ?? undefined,
           },
