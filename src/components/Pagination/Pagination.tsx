@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import styles from './Pagination.module.scss';
 import { Select, MenuItem, IconButton, SelectChangeEvent } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/reduxHooks';
 import { fetchRepositories } from '../../store/searchAction';
-import { setSearchCount } from '../../store/searchSlice';
+import { setPage, setSearchCount } from '../../store/searchSlice';
 
 export const Pagination = (): JSX.Element => {
   const {
@@ -12,8 +11,8 @@ export const Pagination = (): JSX.Element => {
     searchData: search,
     pageInfo,
     totalCount,
+    page,
   } = useAppSelector((state) => state.search);
-  const [page, setPage] = useState<number>(1);
   const dispatch = useAppDispatch();
 
   const totalPages = Math.ceil(totalCount / itemsPerPage);
@@ -33,19 +32,19 @@ export const Pagination = (): JSX.Element => {
   const handleItemsPerPageChange = (event: SelectChangeEvent<number>) => {
     const count = Number(event.target.value);
     dispatch(setSearchCount(count));
-    setPage(1);
+    dispatch(setPage(1));
     fetchRepos(1, count);
   };
 
   const handlePageChange = (direction: 'prev' | 'next') => {
     if (direction === 'prev' && page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
+      dispatch(setPage(newPage));
       fetchRepos(newPage);
     }
     if (direction === 'next' && page < totalPages) {
       const newPage = page + 1;
-      setPage(newPage);
+      dispatch(setPage(newPage));
       fetchRepos(newPage);
     }
   };
@@ -72,8 +71,7 @@ export const Pagination = (): JSX.Element => {
       </div>
       <div>
         <span>
-          {totalCount > 0 ? `${startIndex} - ${endIndex}` : '0 - 0'} of{' '}
-          {totalCount}
+          {totalCount > 0 ? `${startIndex}-${endIndex}` : '0-0'} of {totalCount}
         </span>
       </div>
       <div>

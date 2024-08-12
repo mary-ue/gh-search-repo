@@ -34,6 +34,7 @@ interface SearchState {
   sortColumn: SortColumn | null;
   sortDirection: SortDirection;
   isSorted: boolean;
+  page: number;
 }
 
 const initialState: SearchState = {
@@ -47,6 +48,7 @@ const initialState: SearchState = {
   sortColumn: null,
   sortDirection: 'desc',
   isSorted: false,
+  page: 1,
 };
 
 const searchSlice = createSlice({
@@ -66,6 +68,9 @@ const searchSlice = createSlice({
     setSortDirection(state, action: PayloadAction<SortDirection>) {
       state.sortDirection = action.payload;
     },
+    setPage(state, action: PayloadAction<number>) {
+      state.page = action.payload;
+    },
     resetSearchState(state) {
       state.searchData = '';
       state.count = 10;
@@ -77,6 +82,7 @@ const searchSlice = createSlice({
       state.pageInfo = null;
       state.loading = false;
       state.error = null;
+      state.page = 1;
     },
   },
   extraReducers: (builder) => {
@@ -106,6 +112,7 @@ export const {
   setSortColumn,
   setSortDirection,
   resetSearchState,
+  setPage,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;
