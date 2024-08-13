@@ -93,12 +93,22 @@ const searchSlice = createSlice({
         state.repositories = null;
         state.pageInfo = null;
       })
-      .addCase(fetchRepositories.fulfilled, (state, action) => {
-        state.repositories = action.payload.repositories;
-        state.pageInfo = action.payload.pageInfo;
-        state.totalCount = action.payload.totalCount;
-        state.loading = false;
-      })
+      .addCase(
+        fetchRepositories.fulfilled,
+        (
+          state,
+          action: PayloadAction<{
+            repositories: Repository[];
+            pageInfo: PageInfo;
+            totalCount: number;
+          }>
+        ) => {
+          state.repositories = action.payload.repositories;
+          state.pageInfo = action.payload.pageInfo;
+          state.totalCount = action.payload.totalCount;
+          state.loading = false;
+        }
+      )
       .addCase(fetchRepositories.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loading = false;

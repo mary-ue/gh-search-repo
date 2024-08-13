@@ -5,4 +5,5 @@ export interface ISearchResults {
   loading: boolean;
   error: string | null;
   onRepoSelect: (repo: Repository) => void;
+  selectedRepo: Repository | null;
 }

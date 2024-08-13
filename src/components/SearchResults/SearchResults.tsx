@@ -12,7 +12,11 @@ import {
   TableRow,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/reduxHooks';
-import { setSortColumn, setSortDirection } from '../../store/searchSlice';
+import {
+  setPage,
+  setSortColumn,
+  setSortDirection,
+} from '../../store/searchSlice';
 import { fetchRepositories } from '../../store/searchAction';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -22,12 +26,15 @@ export const SearchResults = ({
   loading,
   error,
   onRepoSelect,
+  selectedRepo,
 }: ISearchResults): JSX.Element => {
   const dispatch = useAppDispatch();
   const { sortColumn, sortDirection, searchData, count, isSorted } =
     useAppSelector((state) => state.search);
 
   const handleSortChange = (column: 'stars' | 'forks' | 'updated') => {
+    dispatch(setPage(1));
+
     const direction =
       sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
     dispatch(setSortColumn(column));
@@ -57,10 +64,6 @@ export const SearchResults = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.results}>
-        {loading && <p>Загрузка...</p>}
-
-        {error && <p>Ошибка: {error}</p>}
-
         {repositories && repositories.length > 0 && (
           <>
             <h2 className={styles.title}>Результаты поиска</h2>
@@ -118,13 +121,19 @@ export const SearchResults = ({
                       key={repo.id}
                       sx={{
                         cursor: 'pointer',
+                        backgroundColor:
+                          selectedRepo?.id === repo.id ? '#E3F2FD' : 'inherit',
                         '&:hover': {
                           backgroundColor: '#f0f0f0',
                         },
                       }}
                       onClick={() => onRepoSelect(repo)}
                     >
-                      <TableCell>{repo.name}</TableCell>
+                      <TableCell>
+                        {repo.name.length > 20
+                          ? `${repo.name.substring(0, 20)}...`
+                          : repo.name}
+                      </TableCell>
                       <TableCell>
                         {repo.primaryLanguage?.name || 'Не указан'}
                       </TableCell>

@@ -1,4 +1,6 @@
+@import '../../variables.scss';
+
 .footer {
-  min-height: 32px;
+  min-height: $footerMinHeight;
   background-color: #4F4F4F;
 }

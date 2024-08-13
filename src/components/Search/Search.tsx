@@ -1,4 +1,4 @@
-import { Button, Input } from '@mui/material';
+import { Button, FormHelperText, Input } from '@mui/material';
 import styles from './Search.module.scss';
 import { useAppDispatch, useAppSelector } from '../../store/reduxHooks';
 import { fetchRepositories } from '../../store/searchAction';
@@ -7,31 +7,52 @@ import { useState } from 'react';
 
 export const Search = (): JSX.Element => {
   const [search, setSearch] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-  const { count } = useAppSelector(state => state.search);
+  const { count } = useAppSelector((state) => state.search);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (search.trim()) {
+    if (search.trim().length >= 2) {
+      setError(null);
       dispatch(resetSearchState());
       dispatch(setSearchData(search));
       dispatch(fetchRepositories({ searchTerm: search, count }));
+    } else {
+      setError('Поисковый запрос должен содержать не менее 2 символов');
+
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     }
-  }
+  };
 
   return (
     <form className={styles.wrapper} onSubmit={handleSearch}>
-      <Input
-        className={styles.input}
-        type="search"
-        autoFocus
-        placeholder="Введите поисковый запрос"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      <div className={styles.inputWrapper}>
+        <Input
+          className={styles.input}
+          type="search"
+          autoFocus
+          placeholder="Введите поисковый запрос"
+          value={search}
+          onChange={(e) => {
+            setError(null);
+            setSearch(e.target.value);
+          }}
+        />
+        {error && (
+          <FormHelperText
+            sx={{ position: 'absolute', top: '-5px', left: '20px' }}
+            error
+          >
+            {error}
+          </FormHelperText>
+        )}
+      </div>
       <Button
-        className={styles.button}
+        sx={{ padding: '10px 20px' }}
         type="submit"
         variant="contained"
         color="primary"

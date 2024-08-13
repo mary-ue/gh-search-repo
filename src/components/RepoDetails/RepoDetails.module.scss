@@ -1,7 +1,30 @@
+@import '../../variables.scss';
+
 .wrapper {
   position: relative;
   padding: 20px;
   background-color: #F2F2F2;
+  height: calc(100vh - $headerMinHeight - $footerMinHeight);
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    transition: background 0.3s ease; 
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.4);
+  }
 }
 
 .choose {

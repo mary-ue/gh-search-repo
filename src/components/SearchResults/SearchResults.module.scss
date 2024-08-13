@@ -1,9 +1,32 @@
+@import '../../variables.scss';
+
 .wrapper {
+  height: calc(100vh - $headerMinHeight - $footerMinHeight);
+  overflow-y: auto;
   padding-top: 20px;
-  margin-right: 20px;
+  padding-right: 15px;
   display: grid;
   grid-template-rows: 1fr 52px;
   grid-template-areas: 'search' 'pagination';
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    transition: background 0.3s ease; 
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.4);
+  }
 }
 
 .title {

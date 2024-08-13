@@ -1,5 +1,7 @@
+@import '../../variables.scss';
+
 .header {
-  min-height: 80px;
+  min-height: $headerMinHeight;
   padding: 19px 0;
   background-color: #00838F;
 }

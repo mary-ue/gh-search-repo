@@ -29,15 +29,20 @@ interface SearchData {
 }
 
 export const fetchRepositories = createAsyncThunk<
-{ repositories: Repository[]; pageInfo: PageInfo; totalCount: number },
+  { repositories: Repository[]; pageInfo: PageInfo; totalCount: number },
   SearchData,
   { rejectValue: string; state: RootState }
 >(
   'repositories/fetchRepositories',
-  async ({searchTerm, count, cursor, sortColumn = 'stars', sortDirection = 'desc' }, { rejectWithValue }) => {
-
+  async (
+    { searchTerm, count, cursor, sortColumn = 'stars', sortDirection = 'desc' },
+    { rejectWithValue }
+  ) => {
     try {
-      const sortQuery = `${searchTerm} sort:${sortColumn}-${sortDirection}`;
+      const query = `${searchTerm} sort:${sortColumn}-${sortDirection}`;
+      
+      // поиск репозиториев по имени пользователя
+      // const sortQuery = `user:${searchTerm} sort:${sortColumn}-${sortDirection}`;
 
       const response = await fetch(GITHUB_API_URL, {
         method: 'POST',
@@ -85,7 +90,7 @@ export const fetchRepositories = createAsyncThunk<
             }
           `,
           variables: {
-            searchTerm: sortQuery,
+            searchTerm: query,
             count,
             cursor: cursor ?? undefined,
           },
