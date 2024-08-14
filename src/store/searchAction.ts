@@ -5,6 +5,16 @@ import { RootState } from './store';
 const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_URL!;
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN!;
 
+/**
+ * Интерфейс ответа от GitHub GraphQL API на запрос поиска репозиториев.
+ * @property {Object} data - Основные данные ответа.
+ * @property {Object} data.search - Результаты поиска репозиториев.
+ * @property {number} data.search.repositoryCount - Общее количество найденных репозиториев.
+ * @property {Array<{ node: Repository }>} data.search.edges - Список найденных репозиториев.
+ * @property {Object} data.search.pageInfo - Информация о пагинации.
+ * @property {string | null} data.search.pageInfo.endCursor - Курсор для следующей страницы результатов (если есть).
+ * @property {boolean} data.search.pageInfo.hasNextPage - Флаг наличия следующей страницы результатов.
+ */
 interface GitHubResponse {
   data: {
     search: {
@@ -20,6 +30,14 @@ interface GitHubResponse {
   };
 }
 
+/**
+ * Интерфейс данных для запроса поиска репозиториев.
+ * @property {string} searchTerm - Строка поиска, введенная пользователем.
+ * @property {number} count - Количество репозиториев, запрашиваемых на одной странице.
+ * @property {string | null} [cursor] - Курсор для пагинации (опционально).
+ * @property {'stars' | 'forks' | 'updated'} [sortColumn] - Колонка для сортировки (по умолчанию "stars").
+ * @property {'asc' | 'desc'} [sortDirection] - Направление сортировки (по умолчанию "desc").
+ */
 interface SearchData {
   searchTerm: string;
   count: number;
@@ -28,6 +46,14 @@ interface SearchData {
   sortDirection?: 'asc' | 'desc';
 }
 
+/**
+ * Асинхронный thunk для получения репозиториев с GitHub GraphQL API.
+ * Запрашивает данные о репозиториях в зависимости от переданных параметров.
+ *
+ * @param {SearchData} param0 Параметры поиска, включая поисковый запрос, cursor (указывает на текущее конкретное место в наборе данных), количество результатов, колонку сортировки и направление сортировки.
+ * @param {object} thunkAPI Объект thunk API для обработки ошибок и получения состояния.
+ * @return {Promise<{ repositories: Repository[]; pageInfo: PageInfo; totalCount: number }>} Возвращает объект с массивом репозиториев, информацией о странице и общим количеством репозиториев.
+ */
 export const fetchRepositories = createAsyncThunk<
   { repositories: Repository[]; pageInfo: PageInfo; totalCount: number },
   SearchData,
@@ -40,7 +66,7 @@ export const fetchRepositories = createAsyncThunk<
   ) => {
     try {
       const query = `${searchTerm} sort:${sortColumn}-${sortDirection}`;
-      
+
       // поиск репозиториев по имени пользователя
       // const sortQuery = `user:${searchTerm} sort:${sortColumn}-${sortDirection}`;
 

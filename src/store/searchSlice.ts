@@ -1,6 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchRepositories } from './searchAction';
 
+/**
+ * Интерфейс репозитория.
+ * @property {string} id - Уникальный идентификатор репозитория.
+ * @property {string} name - Название репозитория.
+ * @property {{ name: string } | null} primaryLanguage - Основной язык программирования, используемый в репозитории.
+ * @property {{ totalCount: number }} forks - Общее количество форков репозитория.
+ * @property {{ totalCount: number }} stargazers - Общее количество звёзд, поставленных репозиторию.
+ * @property {string} updatedAt - Дата последнего обновления репозитория.
+ * @property {string | undefined} description - Описание репозитория (опционально).
+ * @property {{ name: string } | undefined} licenseInfo - Информация о лицензии репозитория (опционально).
+ * @property {{ nodes: Array<{ name: string }> }} languages - Список языков программирования, используемых в репозитории.
+ */
 export interface Repository {
   id: string;
   name: string;
@@ -15,14 +27,42 @@ export interface Repository {
   };
 }
 
+/**
+ * Интерфейс для представления информации о пагинации.
+ * @property {string | null} endCursor - Курсор для определения конца текущей страницы.
+ * @property {boolean} hasNextPage - Флаг наличия следующей страницы.
+ */
 export interface PageInfo {
   endCursor: string | null;
   hasNextPage: boolean;
 }
 
+/**
+ * Типы возможных колонок для сортировки.
+ * @type {'stars' | 'forks' | 'updated'}
+ */
 type SortColumn = 'stars' | 'forks' | 'updated';
+
+/**
+ * Типы направлений сортировки.
+ * @type {'asc' | 'desc'} - 'asc' по возрастанию, 'desc' по убыванию
+ */
 type SortDirection = 'asc' | 'desc';
 
+/**
+ * Интерфейс состояния поиска.
+ * @property {string} searchData - Дынные поискового запроса.
+ * @property {number} count - Количество элементов на странице.
+ * @property {Repository[] | null} repositories - Список репозиториев.
+ * @property {number} totalCount - Общее количество найденных репозиториев.
+ * @property {PageInfo | null} pageInfo - Информация о текущей странице (пагинация).
+ * @property {boolean} loading - Флаг загрузки.
+ * @property {string | null} error - Сообщение об ошибке.
+ * @property {SortColumn | null} sortColumn - Колонка, по которой происходит сортировка.
+ * @property {SortDirection} sortDirection - Направление сортировки.
+ * @property {boolean} isSorted - Флаг, показывающий, применяется ли сортировка.
+ * @property {number} page - Номер текущей страницы поиска.
+ */
 interface SearchState {
   searchData: string;
   count: number;
@@ -55,22 +95,51 @@ const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
+    /**
+     * Устанавливает строку поиска.
+     * @param {SearchState} state - Текущее состояние.
+     * @param {PayloadAction<string>} action - Новая строка поиска.
+     */
     setSearchData(state, action: PayloadAction<string>) {
       state.searchData = action.payload;
     },
+    /**
+     * Устанавливает количество элементов (результатов поиска) на странице.
+     * @param {SearchState} state - Текущее состояние.
+     * @param {PayloadAction<number>} action - Новое количество элементов (результатов поиска).
+     */
     setSearchCount(state, action: PayloadAction<number>) {
       state.count = action.payload;
     },
+    /**
+     * Устанавливает колонку для сортировки.
+     * @param {SearchState} state - Текущее состояние.
+     * @param {PayloadAction<SortColumn | null>} action - Новая колонка для сортировки.
+     */
     setSortColumn(state, action: PayloadAction<SortColumn | null>) {
       state.sortColumn = action.payload;
       state.isSorted = action.payload !== null;
     },
+    /**
+     * Устанавливает направление сортировки.
+     * @param {SearchState} state - Текущее состояние.
+     * @param {PayloadAction<SortDirection>} action - Новое направление сортировки.
+     */
     setSortDirection(state, action: PayloadAction<SortDirection>) {
       state.sortDirection = action.payload;
     },
+    /**
+     * Устанавливает текущую страницу.
+     * @param {SearchState} state - Текущее состояние.
+     * @param {PayloadAction<number>} action - Номер текущей страницы.
+     */
     setPage(state, action: PayloadAction<number>) {
       state.page = action.payload;
     },
+    /**
+     * Сбрасывает состояние поиска к начальному состоянию.
+     * @param {SearchState} state - Текущее состояние.
+     */
     resetSearchState(state) {
       state.searchData = '';
       state.count = 10;

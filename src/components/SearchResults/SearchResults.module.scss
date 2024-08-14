@@ -6,8 +6,9 @@
   padding-top: 20px;
   padding-right: 15px;
   display: grid;
-  grid-template-rows: 1fr 52px;
+  grid-template-rows: 1fr min-content;
   grid-template-areas: 'search' 'pagination';
+  row-gap: 10px;
 
   &::-webkit-scrollbar {
     width: 4px;

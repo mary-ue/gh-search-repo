@@ -1,4 +1,4 @@
-import { Repository } from "../../store/searchSlice";
+import { Repository } from '../../store/searchSlice';
 
 export interface ISearchResults {
   repositories: Repository[] | null;
