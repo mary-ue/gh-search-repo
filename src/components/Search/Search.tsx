@@ -11,13 +11,6 @@ export const Search = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const { count } = useAppSelector((state) => state.search);
 
-  /**
-   * Обрабатывает отправку формы поиска.
-   * Проверяет валидность поискового запроса, сбрасывает состояние поиска,
-   * Устанавливает поисковые данные в Redux и отправляет запрос на получение репозиториев.
-   *
-   * @param {React.FormEvent} event Событие отправки формы.
-   */
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
 

@@ -1,6 +1,7 @@
 .wrapper {
   display: flex;
   align-items: stretch;
+  gap: 20px;
 }
 
 .inputWrapper {
@@ -8,11 +9,31 @@
 }
 
 .input {
-  margin-right: 10px;
   padding: 6px 20px;
-  width: 912px;
+  width: 912px; 
   max-width: 100%;
   background-color: #F2F2F2;
   border-radius: 4px;
   font-style: italic;
+}
+
+@media (max-width: 1024px) {
+  .inputWrapper {
+    width: 100%;
+  }
+
+  .input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .inputWrapper {
+    margin-bottom: 10px;
+  }
 }
